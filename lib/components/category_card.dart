@@ -11,30 +11,32 @@ class CategoryCard extends StatelessWidget {
     return SizedBox(
       height: 160.0,
       child: MainCard(
-        child: LayoutBuilder(builder: (context, constraint) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              CardTitle(title: '종류별 통계'),
-              Expanded(
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  physics: PageScrollPhysics(),
-                  children: List.generate(
-                    20,
-                    (index) => MainStat(
-                      width: constraint.maxWidth / 3,
-                      category: '미세먼지$index',
-                      imgPath: 'assets/images/best.png',
-                      level: '최고',
-                      stat: '0㎍/㎥',
+        child: LayoutBuilder(
+          builder: (context, constraint) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                CardTitle(title: '종류별 통계'),
+                Expanded(
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    physics: PageScrollPhysics(),
+                    children: List.generate(
+                      20,
+                      (index) => MainStat(
+                        width: constraint.maxWidth / 3,
+                        category: '미세먼지$index',
+                        imgPath: 'assets/images/best.png',
+                        level: '최고',
+                        stat: '0㎍/㎥',
+                      ),
                     ),
                   ),
-                ),
-              )
-            ],
-          );
-        }),
+                )
+              ],
+            );
+          },
+        ),
       ),
     );
   }
