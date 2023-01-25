@@ -1,3 +1,6 @@
+import 'package:dusty_dust/components/main_app_bar.dart';
+import 'package:dusty_dust/components/main_drawer.dart';
+import 'package:dusty_dust/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -6,8 +9,12 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text('Home Screen'),
+      backgroundColor: PRIMARY_COLOR,
+      drawer: MainDrawer(),
+      body: CustomScrollView(
+        slivers: [
+          const MainAppBar(),
+        ],
       ),
     );
   }
