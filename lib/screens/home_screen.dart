@@ -3,9 +3,9 @@ import 'package:dusty_dust/components/hourly_card.dart';
 import 'package:dusty_dust/components/main_app_bar.dart';
 import 'package:dusty_dust/components/main_drawer.dart';
 import 'package:dusty_dust/constants/colors.dart';
-import 'package:dusty_dust/constants/status_level.dart';
 import 'package:dusty_dust/models/stat_model.dart';
 import 'package:dusty_dust/repositorires/stat_repository.dart';
+import 'package:dusty_dust/utils/data_utils.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -40,9 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
             List<StatModel> stats = snapshot.data!;
             StatModel recentStat = stats[0];
 
-            final status = statusLevel
-                .where((level) => level.minFineDust < recentStat.seoul)
-                .last;
+            final status = DataUtils.getCurrentStatusFromStat(
+                value: recentStat.seoul, itemCode: ItemCode.PM10);
 
             return CustomScrollView(
               slivers: [
