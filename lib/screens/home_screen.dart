@@ -8,6 +8,7 @@ import 'package:dusty_dust/models/stat_model.dart';
 import 'package:dusty_dust/repositorires/stat_repository.dart';
 import 'package:dusty_dust/utils/data_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -35,7 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<Map<ItemCode, List<StatModel>>> fetchData() async {
-    Map<ItemCode, List<StatModel>> stats = {};
     List<Future> futures = [];
 
     for (final itemCode in ItemCode.values) {
@@ -47,10 +47,19 @@ class _HomeScreenState extends State<HomeScreen> {
     for (int i = 0; i < results.length; i++) {
       final ItemCode key = ItemCode.values[i];
       final List<StatModel> value = results[i];
-      stats.addAll({key: value});
+
+      final box = Hive.box<StatModel>(key.name);
+      for (StatModel stat in value) {
+        box.put(stat.dataTime.toString(), stat);
+      }
     }
 
-    return stats;
+    return ItemCode.values.fold<Map<ItemCode, List<StatModel>>>({}, (acc, cur) {
+      final box = Hive.box<StatModel>(cur.name);
+      acc.addAll({cur: box.values.toList()});
+
+      return acc;
+    });
   }
 
   scrollListener() {
