@@ -1,10 +1,15 @@
 import 'package:dusty_dust/components/card_title.dart';
 import 'package:dusty_dust/components/main_card.dart';
 import 'package:dusty_dust/components/main_stat.dart';
+import 'package:dusty_dust/models/stat_and_status_model.dart';
+import 'package:dusty_dust/utils/data_utils.dart';
 import 'package:flutter/material.dart';
 
 class CategoryCard extends StatelessWidget {
-  const CategoryCard({super.key});
+  final String region;
+  final List<StatAndStatusModel> models;
+
+  const CategoryCard({super.key, required this.models, required this.region});
 
   @override
   Widget build(BuildContext context) {
@@ -21,16 +26,20 @@ class CategoryCard extends StatelessWidget {
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     physics: PageScrollPhysics(),
-                    children: List.generate(
-                      20,
-                      (index) => MainStat(
-                        width: constraint.maxWidth / 3,
-                        category: '미세먼지$index',
-                        imgPath: 'assets/images/best.png',
-                        level: '최고',
-                        stat: '0㎍/㎥',
-                      ),
-                    ),
+                    children: models
+                        .map(
+                          (model) => MainStat(
+                            category: DataUtils.getItemCodeKrString(
+                              itemCode: model.itemCode,
+                            ),
+                            imgPath: model.status.imagePath,
+                            level: model.status.label,
+                            stat:
+                                '${model.stat.getLevelFromRegion(region)}${DataUtils.getUnitFromItemCode(itemCode: model.itemCode)}',
+                            width: constraint.maxWidth / 3,
+                          ),
+                        )
+                        .toList(),
                   ),
                 )
               ],

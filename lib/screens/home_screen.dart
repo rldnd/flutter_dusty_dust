@@ -4,6 +4,7 @@ import 'package:dusty_dust/components/main_app_bar.dart';
 import 'package:dusty_dust/components/main_drawer.dart';
 import 'package:dusty_dust/constants/colors.dart';
 import 'package:dusty_dust/constants/regions.dart';
+import 'package:dusty_dust/models/stat_and_status_model.dart';
 import 'package:dusty_dust/models/stat_model.dart';
 import 'package:dusty_dust/repositorires/stat_repository.dart';
 import 'package:dusty_dust/utils/data_utils.dart';
@@ -66,6 +67,20 @@ class _HomeScreenState extends State<HomeScreen> {
             final status = DataUtils.getCurrentStatusFromStat(
                 value: pm10RecentStat.seoul, itemCode: ItemCode.PM10);
 
+            final ssModel = stats.keys.map((key) {
+              final value = stats[key]!;
+              final stat = value[0];
+
+              return StatAndStatusModel(
+                itemCode: key,
+                status: DataUtils.getCurrentStatusFromStat(
+                  value: stat.getLevelFromRegion(region),
+                  itemCode: key,
+                ),
+                stat: stat,
+              );
+            }).toList();
+
             return CustomScrollView(
               slivers: [
                 MainAppBar(
@@ -76,10 +91,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 SliverToBoxAdapter(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: const [
-                      CategoryCard(),
-                      SizedBox(height: 16.0),
-                      HourlyCard(),
+                    children: [
+                      CategoryCard(
+                        region: region,
+                        models: ssModel,
+                      ),
+                      const SizedBox(height: 16.0),
+                      const HourlyCard(),
                     ],
                   ),
                 ),
