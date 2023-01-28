@@ -1,19 +1,18 @@
 import 'package:dusty_dust/components/card_title.dart';
 import 'package:dusty_dust/components/main_card.dart';
 import 'package:dusty_dust/components/main_stat.dart';
-import 'package:dusty_dust/models/stat_and_status_model.dart';
+import 'package:dusty_dust/models/stat_model.dart';
 import 'package:dusty_dust/utils/data_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class CategoryCard extends StatelessWidget {
   final Color darkColor;
   final Color lightColor;
   final String region;
-  final List<StatAndStatusModel> models;
 
   const CategoryCard({
     super.key,
-    required this.models,
     required this.region,
     required this.darkColor,
     required this.lightColor,
@@ -38,17 +37,28 @@ class CategoryCard extends StatelessWidget {
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     physics: PageScrollPhysics(),
-                    children: models
+                    children: ItemCode.values
                         .map(
-                          (model) => MainStat(
-                            category: DataUtils.getItemCodeKrString(
-                              itemCode: model.itemCode,
-                            ),
-                            imgPath: model.status.imagePath,
-                            level: model.status.label,
-                            stat:
-                                '${model.stat.getLevelFromRegion(region)}${DataUtils.getUnitFromItemCode(itemCode: model.itemCode)}',
-                            width: constraint.maxWidth / 3,
+                          (itemCode) => ValueListenableBuilder<Box>(
+                            valueListenable:
+                                Hive.box<StatModel>(itemCode.name).listenable(),
+                            builder: (context, box, widget) {
+                              final stat = box.values.last as StatModel;
+                              final status = DataUtils.getCurrentStatusFromStat(
+                                  value: stat.getLevelFromRegion(region),
+                                  itemCode: itemCode);
+
+                              return MainStat(
+                                category: DataUtils.getItemCodeKrString(
+                                  itemCode: itemCode,
+                                ),
+                                imgPath: status.imagePath,
+                                level: status.label,
+                                stat:
+                                    '${stat.getLevelFromRegion(region)}${DataUtils.getUnitFromItemCode(itemCode: itemCode)}',
+                                width: constraint.maxWidth / 3,
+                              );
+                            },
                           ),
                         )
                         .toList(),
