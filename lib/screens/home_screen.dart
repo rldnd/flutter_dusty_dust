@@ -2,7 +2,6 @@ import 'package:dusty_dust/components/category_card.dart';
 import 'package:dusty_dust/components/hourly_card.dart';
 import 'package:dusty_dust/components/main_app_bar.dart';
 import 'package:dusty_dust/components/main_drawer.dart';
-import 'package:dusty_dust/constants/colors.dart';
 import 'package:dusty_dust/constants/regions.dart';
 import 'package:dusty_dust/models/stat_and_status_model.dart';
 import 'package:dusty_dust/models/stat_model.dart';
@@ -42,7 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: PRIMARY_COLOR,
       drawer: MainDrawer(
         selectedRegion: region,
         onRegionTap: (region) {
@@ -81,27 +79,35 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             }).toList();
 
-            return CustomScrollView(
-              slivers: [
-                MainAppBar(
-                  region: region,
-                  stat: pm10RecentStat,
-                  status: status,
-                ),
-                SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      CategoryCard(
-                        region: region,
-                        models: ssModel,
-                      ),
-                      const SizedBox(height: 16.0),
-                      const HourlyCard(),
-                    ],
+            return Container(
+              color: status.primaryColor,
+              child: CustomScrollView(
+                slivers: [
+                  MainAppBar(
+                    region: region,
+                    stat: pm10RecentStat,
+                    status: status,
                   ),
-                ),
-              ],
+                  SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        CategoryCard(
+                          region: region,
+                          models: ssModel,
+                          darkColor: status.darkColor,
+                          lightColor: status.lightColor,
+                        ),
+                        const SizedBox(height: 16.0),
+                        HourlyCard(
+                          darkColor: status.darkColor,
+                          lightColor: status.lightColor,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             );
           }),
     );

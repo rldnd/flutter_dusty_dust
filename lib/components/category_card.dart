@@ -6,22 +6,34 @@ import 'package:dusty_dust/utils/data_utils.dart';
 import 'package:flutter/material.dart';
 
 class CategoryCard extends StatelessWidget {
+  final Color darkColor;
+  final Color lightColor;
   final String region;
   final List<StatAndStatusModel> models;
 
-  const CategoryCard({super.key, required this.models, required this.region});
+  const CategoryCard({
+    super.key,
+    required this.models,
+    required this.region,
+    required this.darkColor,
+    required this.lightColor,
+  });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 160.0,
       child: MainCard(
+        backgroundColor: lightColor,
         child: LayoutBuilder(
           builder: (context, constraint) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                CardTitle(title: '종류별 통계'),
+                CardTitle(
+                  title: '종류별 통계',
+                  backgroundColor: darkColor,
+                ),
                 Expanded(
                   child: ListView(
                     scrollDirection: Axis.horizontal,
