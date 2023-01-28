@@ -42,9 +42,9 @@ class _HomeScreenState extends State<HomeScreen> {
       final fetchTime = DateTime(now.year, now.month, now.day, now.hour);
 
       final box = Hive.box<StatModel>(ItemCode.PM10.name);
-      final recent = box.values.last;
 
-      if (recent.dataTime.isAtSameMomentAs(fetchTime)) return;
+      if (box.values.isNotEmpty &&
+          box.values.last.dataTime.isAtSameMomentAs(fetchTime)) return;
 
       List<Future> futures = [];
 
@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
     } on DioError catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('인터넷 연결이 원활하지 않습니다.'),
       ));
     }
@@ -90,6 +90,13 @@ class _HomeScreenState extends State<HomeScreen> {
     return ValueListenableBuilder<Box>(
       valueListenable: Hive.box<StatModel>(ItemCode.PM10.name).listenable(),
       builder: (context, box, widget) {
+        if (box.values.isEmpty) {
+          return const Scaffold(
+              body: Center(
+            child: CircularProgressIndicator(),
+          ));
+        }
+
         final recentStat = box.values.toList().last as StatModel;
 
         final status = DataUtils.getCurrentStatusFromStat(
